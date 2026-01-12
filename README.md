@@ -98,6 +98,18 @@ Task-specific logic is intentionally abstracted to keep the framework reusable.
 - Enable easy experimentation with prompt strategies and model behaviour
 
 ---
+## Demo Video
+
+This short demo shows the **UI-TARS v1.5 (7B) model** driving a **mobile browser-based chat interface** to perform automated tasks via **ADB**.  
+It illustrates the same underlying reasoning and prompt-driven execution used in the desktop agent, adapted for a lightweight phone workflow.
+
+[Demo](https://drive.google.com/file/d/1-l9KP97tCqKWT6NeKzPPa2zQT1oYQyXL/view?usp=sharing)
+
+
+> Note: This demo uses a simplified interface and does not contain any personal data.
+
+---
+
 
 ## Limitations
 
