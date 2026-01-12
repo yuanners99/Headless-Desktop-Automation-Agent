@@ -24,39 +24,55 @@ The agent is designed to interpret high-level task instructions, reason over the
 
 ---
 
+## Architecture Overview
+
+The agent mirrors the core logic of the UI-TARS desktop system, but without the GUI. Its components include:
+
+- **Prompt Layer** – Constructs structured prompts for UI-TARS reasoning.
+- **Action Parser** – Converts model output into executable desktop actions.
+- **Agent Core** – Manages state, retries, and execution loop.
+- **Desktop Controller** – Executes UI actions (mouse, keyboard, window focus) via PyAutoGUI.
+- **CLI Wrappers** – `run_with_arguments.py` for single instructions and `run_agent_loop.py` for batch execution.
+
+This modular design keeps **decision-making model-driven** while maintaining **deterministic execution** at the system level.
+
+---
+
 ## How It Works
 
 At a high level, the automation loop follows this pattern:
 
 1. Capture the current screen state
-2. Generate a structured prompt based on the task instruction and screen context
-3. Invoke the UI interaction model
+2. Construct a structured prompt using task instructions and screen context
+3. Invoke the **UI-TARS v1.5 (7B)** model
 4. Parse the model’s response into executable actions
 5. Perform the corresponding desktop interactions
 6. Repeat until the task is completed
 
-This design keeps decision-making model-driven while maintaining deterministic execution at the system level.
+---
+
+## Core Components
+
+- `desktop_agent_core.py` – Main agent loop and state management
+- `prompts.py` – System and user prompt definitions for UI-TARS
+- `action_parser.py` – Converts model output into structured actions
+- `desktop_controller.py` – Executes UI actions on the desktop
+- `run_with_arguments.py` – CLI entry point for single instructions
+- `run_agent_loop.py` – Batch instruction orchestrator
 
 ---
 
-## Architecture Overview
+## Exit Codes
 
-The project is organised into loosely coupled components:
+The scripts use consistent exit codes for integration and orchestration:
 
-- **Agent Core**  
-  Orchestrates the automation loop and manages state between steps.
-
-- **Prompt Engine**  
-  Transforms high-level instructions into model-optimised prompts.
-
-- **Model Interface**  
-  Handles communication with the UI interaction model and normalises responses.
-
-- **Execution Layer**  
-  Maps model outputs to concrete desktop actions (mouse, keyboard, window focus).
-
-- **Integration Scripts**  
-  Provide stable entry points for external workflow orchestration.
+| Code | Meaning | Notes |
+|-----:|--------|-------|
+| 0 | Success | Instruction completed successfully |
+| 1 | User intervention required | Model requested manual action |
+| 2 | Agent error | Parsing or execution failure |
+| 3 | Authentication required | OTP / mobile input needed |
+| 130 | User cancelled | Ctrl+C (CLI only) |
 
 ---
 
@@ -65,14 +81,13 @@ The project is organised into loosely coupled components:
 A typical automated run may involve:
 
 - Initialising a clean execution environment
-- Loading task-specific context or data
+- Loading task-specific context or input data
 - Interpreting a high-level instruction
-- Driving UI interactions to navigate applications
+- Driving UI navigation via UI-TARS reasoning
 - Extracting structured information from the UI
-- Returning results or status to the calling process
+- Returning results or execution status
 
-The specific task logic is intentionally abstracted to keep the framework reusable.
-
+Task-specific logic is intentionally abstracted to keep the framework reusable.
 ---
 
 ## Design Goals
